@@ -5,15 +5,28 @@ import com.itextpdf.text.pdf.*;
 import model.Recibo;
 import model.Servico;
 
+import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class GeradorReciboPDF {
 
     public static void gerar(Recibo recibo) {
-        String nomeArquivo = "recibo_" + recibo.getId() + ".pdf";
         Document document = new Document(PageSize.A4, 36, 36, 36, 36);
 
         try {
+            Path desktop = Paths.get(System.getProperty("user.home"), "Desktop");
+
+            if (!Files.exists(desktop)) {
+                desktop = Paths.get(System.getProperty("user.home"), "OneDrive", "Desktop");
+            }
+
+            String nomeArquivo = desktop.resolve("recibo_" + recibo.getId() + ".pdf").toString();
+
+            System.out.println("Arquivo final: " + nomeArquivo);
+
             PdfWriter.getInstance(document, new FileOutputStream(nomeArquivo));
             document.open();
 
