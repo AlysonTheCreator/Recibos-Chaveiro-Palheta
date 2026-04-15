@@ -1,0 +1,20 @@
+# IntelliJ
+.idea/
+*.iml
+
+# Build
+out/
+build/
+
+# Sistema
+*.log
+
+# Banco SQLite
+*.db
+*.db-journal
+
+# Arquivos temporários
+*.class
+
+# PDFs gerados
+*.pdf
