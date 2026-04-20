@@ -10,13 +10,21 @@ import java.sql.Statement;
 public class ReciboDAO {
 
     public int salvarRecibo(Recibo recibo) {
-        String sql = "INSERT INTO recibos (datahora, total_geral) VALUES (?, ?)";
+        String sql = """
+                INSERT INTO recibos
+                (datahora, nome_empresa, cnpj, endereco, total_geral)
+                VALUES (?, ?, ?, ?, ?)
+                """;
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, recibo.getDataHora());
-            stmt.setDouble(2, recibo.getTotalGeral());
+            stmt.setString(2, recibo.getNomeEmpresa());
+            stmt.setString(3, recibo.getCnpj());
+            stmt.setString(4, recibo.getEndereco());
+            stmt.setDouble(5, recibo.getTotalGeral());
+
             stmt.executeUpdate();
 
             var rs = stmt.getGeneratedKeys();

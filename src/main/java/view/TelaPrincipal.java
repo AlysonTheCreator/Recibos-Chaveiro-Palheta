@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class TelaPrincipal extends JFrame {
+    private JTextField campoNomeEmpresa;
+    private JTextField campoCnpj;
+    private JTextField campoEndereco;
+
     private JTextField campoNomeServico;
     private JTextField campoQuantidade;
     private JTextField campoPreco;
@@ -18,62 +22,93 @@ public class TelaPrincipal extends JFrame {
         controller = new ReciboController();
 
         setTitle("Cadastro de Serviços");
-        setSize(600, 500);
+        setSize(600, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setUndecorated(true);
         setLayout(null);
+
         add(criarBarraTitulo());
 
+        JLabel labelEmpresa = new JLabel("Nome da empresa:");
+        labelEmpresa.setBounds(190, 65, 250, 25);
+        labelEmpresa.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        add(labelEmpresa);
+
+        campoNomeEmpresa = new JTextField();
+        campoNomeEmpresa.setBounds(150, 95, 300, 30);
+        add(campoNomeEmpresa);
+
+        JLabel labelCnpj = new JLabel("CNPJ:");
+        labelCnpj.setBounds(255, 140, 120, 25);
+        labelCnpj.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        add(labelCnpj);
+
+        campoCnpj = new JTextField();
+        campoCnpj.setBounds(150, 170, 300, 30);
+        add(campoCnpj);
+
+        JLabel labelEndereco = new JLabel("Endereço:");
+        labelEndereco.setBounds(235, 215, 150, 25);
+        labelEndereco.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        add(labelEndereco);
+
+        campoEndereco = new JTextField();
+        campoEndereco.setBounds(150, 245, 300, 30);
+        add(campoEndereco);
+
         JLabel labelNome = new JLabel("Nome do serviço:");
-        labelNome.setBounds(180, 100, 250, 30);
-        labelNome.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        labelNome.setBounds(200, 295, 220, 25);
+        labelNome.setFont(new Font("Segoe UI", Font.BOLD, 20));
         add(labelNome);
 
         campoNomeServico = new JTextField();
-        campoNomeServico.setBounds(150, 135, 280, 30);
+        campoNomeServico.setBounds(150, 325, 300, 30);
         add(campoNomeServico);
 
         JLabel labelQuantidade = new JLabel("Quantidade:");
-        labelQuantidade.setBounds(210, 185, 200, 30);
-        labelQuantidade.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        labelQuantidade.setBounds(240, 370, 170, 25);
+        labelQuantidade.setFont(new Font("Segoe UI", Font.BOLD, 20));
         add(labelQuantidade);
 
         campoQuantidade = new JTextField();
-        campoQuantidade.setBounds(225, 220, 120, 30);
+        campoQuantidade.setBounds(235, 400, 130, 30);
         add(campoQuantidade);
 
         JLabel labelPreco = new JLabel("Preço:");
-        labelPreco.setBounds(245, 270, 200, 30);
-        labelPreco.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        labelPreco.setBounds(260, 445, 100, 25);
+        labelPreco.setFont(new Font("Segoe UI", Font.BOLD, 20));
         add(labelPreco);
 
         campoPreco = new JTextField();
-        campoPreco.setBounds(225, 305, 120, 30);
+        campoPreco.setBounds(235, 475, 130, 30);
         add(campoPreco);
 
         JButton botaoAdicionar = new JButton("Adicionar");
-        botaoAdicionar.setBounds(130, 380, 140, 40);
+        botaoAdicionar.setBounds(120, 570, 150, 42);
         botaoAdicionar.addActionListener(e -> adicionarServico());
         add(botaoAdicionar);
 
         JButton botaoVerRecibo = new JButton("Ver recibo");
-        botaoVerRecibo.setBounds(300, 380, 140, 40);
+        botaoVerRecibo.setBounds(320, 570, 150, 42);
         botaoVerRecibo.addActionListener(e -> abrirTelaRecibo());
         add(botaoVerRecibo);
 
         setVisible(true);
     }
 
-
     private void adicionarServico() {
         try {
+            String nomeEmpresa = campoNomeEmpresa.getText().trim();
+            String cnpj = campoCnpj.getText().trim();
+            String endereco = campoEndereco.getText().trim();
+
             String nome = campoNomeServico.getText().trim();
             String quantidadeTexto = campoQuantidade.getText().trim();
             String precoTexto = campoPreco.getText().trim();
 
             if (nome.isEmpty() || quantidadeTexto.isEmpty() || precoTexto.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Preencha todos os campos.");
+                JOptionPane.showMessageDialog(this, "Preencha os campos do serviço.");
                 return;
             }
 
@@ -85,6 +120,7 @@ public class TelaPrincipal extends JFrame {
                 return;
             }
 
+            controller.definirDadosCliente(nomeEmpresa, cnpj, endereco);
             controller.adicionarServico(nome, quantidade, preco);
 
             JOptionPane.showMessageDialog(this, "Item adicionado ao recibo!");
@@ -102,8 +138,13 @@ public class TelaPrincipal extends JFrame {
         }
     }
 
-
     private void abrirTelaRecibo() {
+        controller.definirDadosCliente(
+                campoNomeEmpresa.getText().trim(),
+                campoCnpj.getText().trim(),
+                campoEndereco.getText().trim()
+        );
+
         if (telaRecibo == null) {
             telaRecibo = new TelaRecibo(controller);
         } else {
@@ -111,10 +152,11 @@ public class TelaPrincipal extends JFrame {
             telaRecibo.atualizarTabela();
         }
     }
+
     private JPanel criarBarraTitulo() {
         JPanel barra = new JPanel();
         barra.setBounds(0, 0, 600, 40);
-        barra.setBackground(new Color(255, 255, 255));
+        barra.setBackground(Color.WHITE);
         barra.setLayout(null);
 
         JLabel titulo = new JLabel("Chaveiro Palheta");
@@ -124,29 +166,29 @@ public class TelaPrincipal extends JFrame {
         barra.add(titulo);
 
         JButton botaoFechar = new JButton("X");
-        botaoFechar.setBounds(560, 0, 40, 50);
+        botaoFechar.setBounds(560, 0, 40, 40);
         botaoFechar.setFont(new Font("Arial", Font.BOLD, 16));
         botaoFechar.setMargin(new Insets(0, 0, 0, 0));
         botaoFechar.setFocusPainted(false);
         botaoFechar.setBorderPainted(false);
-        botaoFechar.setBackground(new Color(255, 255, 255));
+        botaoFechar.setBackground(Color.WHITE);
         botaoFechar.setForeground(Color.BLACK);
-
         botaoFechar.addActionListener(e -> System.exit(0));
 
         botaoFechar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 botaoFechar.setBackground(Color.RED);
+                botaoFechar.setForeground(Color.WHITE);
             }
 
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                botaoFechar.setBackground(new Color(255, 255, 255));
+                botaoFechar.setBackground(Color.WHITE);
+                botaoFechar.setForeground(Color.BLACK);
             }
         });
 
         barra.add(botaoFechar);
 
-        // Lógica de arrastar a janela
         barra.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 xMouse = evt.getX();
@@ -158,7 +200,6 @@ public class TelaPrincipal extends JFrame {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
                 int x = evt.getXOnScreen();
                 int y = evt.getYOnScreen();
-
                 setLocation(x - xMouse, y - yMouse);
             }
         });

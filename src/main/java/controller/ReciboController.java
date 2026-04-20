@@ -5,13 +5,22 @@ import model.Recibo;
 import model.Servico;
 import util.GeradorReciboPDF;
 
+
 public class ReciboController {
     private Recibo reciboAtual;
     private final ReciboDAO reciboDAO;
 
+
     public ReciboController() {
         this.reciboAtual = new Recibo();
         this.reciboDAO = new ReciboDAO();
+
+    }
+
+    public void definirDadosCliente(String nomeEmpresa, String cnpj, String endereco) {
+        reciboAtual.setNomeEmpresa(nomeEmpresa);
+        reciboAtual.setCnpj(cnpj);
+        reciboAtual.setEndereco(endereco);
     }
 
     public void adicionarServico(String nome, int quantidade, double preco) {
@@ -27,27 +36,21 @@ public class ReciboController {
         return reciboAtual;
     }
 
-    public void novoRecibo() {
-        reciboAtual = new Recibo();
-    }
-
     public boolean finalizarReciboEGerarPDF() {
         if (reciboAtual.estaVazio()) {
             return false;
         }
 
         int idRecibo = reciboDAO.salvarRecibo(reciboAtual);
-
         if (idRecibo == -1) {
             return false;
         }
 
         reciboAtual.setId(idRecibo);
         reciboDAO.salvarItensRecibo(idRecibo, reciboAtual);
-
         GeradorReciboPDF.gerar(reciboAtual);
 
-        novoRecibo();
+        reciboAtual = new Recibo();
         return true;
     }
 }
